@@ -1,5 +1,21 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.dto.RangoFechaReservaDto;
 import com.example.demo.dto.ReservaDTO;
 import com.example.demo.model.Cuenta;
@@ -10,21 +26,6 @@ import com.example.demo.service.CuentaService;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.ReservaService;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/reserva")
@@ -95,21 +96,17 @@ public class ReservaController {
         Cuenta cuenta = cuentaService.findById(reservaDTO.getClienteId());
         Habitacion habitacionReservada = habitacionService.findById(reservaDTO.getHabitacionId());
 
-
         try {
             emailService.enviarCorreo(
-                reserva,
-                cuenta.getCorreo(), 
-                cuenta.getNombre(),
-                habitacionReservada, 
-                reservaDTO.getFechaReserva(), 
-                reservaDTO.getFechaFinReserva()
-            );
+                    reserva,
+                    cuenta.getCorreo(),
+                    cuenta.getNombre(),
+                    habitacionReservada,
+                    reservaDTO.getFechaReserva(),
+                    reservaDTO.getFechaFinReserva());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        
 
         if (reserva != null && !reserva.equals("Fecha no disponible")) {
             return ResponseEntity.ok("Reserva creada con éxito");
@@ -133,7 +130,6 @@ public class ReservaController {
         }
     }
 
-
     @GetMapping("/historial")
     public ResponseEntity<List<Reserva>> obtenerHistorial(@RequestParam Long clienteId) {
         List<Reserva> historial = reservaService.obtenerHistorialReservas(clienteId);
@@ -143,7 +139,7 @@ public class ReservaController {
         return ResponseEntity.ok(historial);
     }
 
-    @PutMapping("/confirmar")
+    @GetMapping("/confirmar")
     public ResponseEntity<String> confirmarReserva(@RequestParam Long reservaId) {
         String resultado = reservaService.confirmarReserva(reservaId);
 
@@ -153,4 +149,5 @@ public class ReservaController {
             return ResponseEntity.ok(resultado);
         }
     }
+
 }
