@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.model.Categoria;
 import com.example.demo.service.CategoriaService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://hotel-back-production.up.railway.app:8080")
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {

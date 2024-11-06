@@ -36,7 +36,7 @@ public class RolController {
     }
 
     @PostMapping
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://hotel-back-production.up.railway.app:8080")
     public ResponseEntity<?> createRol(@Valid @RequestBody CrearRolDto rolDTO) {
         try {
             Rol rol = rolService.createRol(rolDTO);
