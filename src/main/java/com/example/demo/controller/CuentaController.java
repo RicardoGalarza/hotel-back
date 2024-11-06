@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/cuentas")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://hotel-back-production.up.railway.app:8080")
 public class CuentaController {
 
     @Autowired
