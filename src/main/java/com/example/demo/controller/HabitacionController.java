@@ -42,7 +42,7 @@ import com.example.demo.service.HabitacionService;
 import com.example.demo.service.ImagenService;
 import com.example.demo.service.PoliticaService;
 
-@CrossOrigin(origins = "http://hotel-back-production.up.railway.app:8080")
+@CrossOrigin(origins = "http://hotel-back-production.up.railway.app")
 @RestController
 @RequestMapping("/habitaciones")
 public class HabitacionController {
