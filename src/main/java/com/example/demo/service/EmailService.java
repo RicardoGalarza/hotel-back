@@ -1,5 +1,13 @@
 package com.example.demo.service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.model.Habitacion;
 import com.example.demo.model.Reserva;
 import com.sendgrid.Method;
@@ -9,12 +17,6 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 
 @Service
@@ -73,7 +75,7 @@ public class EmailService {
             "<p><strong>Habitación:</strong> " + habitacion.getNombre() + "</p>" +
             "<p><strong>Fecha de inicio:</strong> " + fechaReserva.format(formatter) + "</p>" +
             "<p><strong>Fecha de termino:</strong> " + fechaFinReserva.format(formatter) + "</p>" +
-            "<a href='http://localhost:3000/reserva/confirmar?reservaId=" + reserva.getId() + "' class='button' style='color:#fff'>Confirmar Reserva</a>" +
+            "<a href='http://hotel-back-production.up.railway.app/reserva/confirmar?reservaId=" + reserva.getId() + "' class='button' style='color:#fff'>Confirmar Reserva</a>" +
             "</div>" +
             "</div>" +
             "</body>" +
