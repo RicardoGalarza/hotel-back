@@ -91,9 +91,8 @@
         <dependency>
             <groupId>com.sendgrid</groupId>
             <artifactId>sendgrid-java</artifactId>
-            <version>4.9.3</version>
+            <version>4.9.3</version> <!-- Verifica que esta versión esté disponible -->
         </dependency>
-
 
     </dependencies>
 
