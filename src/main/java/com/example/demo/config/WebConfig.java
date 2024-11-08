@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("https://hotel-app-production-afac.up.railway.app") // Ajusta el origen de acuerdo a tu frontend
+            .allowedOrigins("http://hotel-app-production-afac.up.railway.app") // Ajusta el origen de acuerdo a tu frontend
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
             .allowedHeaders("*")
             .allowCredentials(true);
