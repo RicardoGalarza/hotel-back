@@ -22,7 +22,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class EmailService {
-
+    
     @Value("${spring.sendgrid.api-key}")
     private String sendGridApiKey;
 
