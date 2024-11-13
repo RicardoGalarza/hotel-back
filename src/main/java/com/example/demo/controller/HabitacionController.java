@@ -42,7 +42,7 @@ import com.example.demo.service.HabitacionService;
 import com.example.demo.service.ImagenService;
 import com.example.demo.service.PoliticaService;
 
-@CrossOrigin(origins = "http://hotel-back-production.up.railway.app")
+@CrossOrigin(origins = "https://appealing-healing-production.up.railway.app")
 @RestController
 @RequestMapping("/habitaciones")
 public class HabitacionController {
@@ -94,7 +94,8 @@ public class HabitacionController {
             @RequestParam("descripcion") String descripcion,
             @RequestParam("precio") Double precio,
             @RequestParam("categorias") String categorias,
-            @RequestParam("imagenes") List<MultipartFile> imagenes,
+            @RequestParam("imagenes") List<MultipartFile> imagenes, // Asegúrate de que las imágenes estén bien
+                                                                    // recogidas
             @RequestParam("ciudad") Long idCiudad,
             @RequestParam("huespedesAdultos") int huespedesAdultos,
             @RequestParam("huespedesNinos") int huespedesNinos,
@@ -151,17 +152,15 @@ public class HabitacionController {
 
         for (MultipartFile imagen : imagenes) {
             try {
-                // Generar la ruta completa donde se guardará la imagen
+                // Ruta completa donde guardar la imagen
                 Path filePath = Paths.get(uploadDirectory + imagen.getOriginalFilename().replace(" ", ""));
-
-                // Guardar la imagen en el directorio
                 Files.write(filePath, imagen.getBytes());
 
-                // Guardar la imagen en la base de datos con el ID de la habitación
+                // Guardar la imagen en la base de datos (relacionándola con la habitación)
                 Imagen nuevaImagen = new Imagen();
                 nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
                 nuevaImagen.setHabitacion(savedHabitacion);
-                imagenService.saveImagen(nuevaImagen); // Guarda la imagen con ImagenService
+                imagenService.saveImagen(nuevaImagen); // Guarda la imagen en la base de datos
 
                 System.out.println("Imagen guardada en: " + filePath.toString());
             } catch (IOException e) {
@@ -190,70 +189,73 @@ public class HabitacionController {
     }
 
     @PutMapping("/{id}")
-public ResponseEntity<Habitacion> updateHabitacion(
-        @PathVariable Long id,
-        @RequestParam("nombre") String nombre,
-        @RequestParam("descripcion") String descripcion,
-        @RequestParam("precio") Double precio,
-        @RequestParam("categorias") String categorias,
-        @RequestParam(value = "imagenes", required = false) List<MultipartFile> imagenes,
-        @RequestParam("ciudad") Long idCiudad,
-        @RequestParam("huespedesAdultos") int huespedesAdultos,
-        @RequestParam("huespedesNinos") int huespedesNinos,
-        @RequestParam("whatsapp") String whatsapp,
-        @RequestParam(value = "politicas", required = false) String politicas,
-        @RequestParam(value = "caracteristicas", required = false) String caracteristicas) {
+    public ResponseEntity<Habitacion> updateHabitacion(
+            @PathVariable Long id,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("precio") Double precio,
+            @RequestParam("categorias") String categorias,
+            @RequestParam(value = "imagenes", required = false) List<MultipartFile> imagenes,
+            @RequestParam("ciudad") Long idCiudad,
+            @RequestParam("huespedesAdultos") int huespedesAdultos,
+            @RequestParam("huespedesNinos") int huespedesNinos,
+            @RequestParam("whatsapp") String whatsapp,
+            @RequestParam(value = "politicas", required = false) String politicas,
+            @RequestParam(value = "caracteristicas", required = false) String caracteristicas) {
 
-    Optional<Habitacion> existingHabitacion = habitacionService.getHabitacionById(id);
-    if (existingHabitacion.isPresent()) {
-        Habitacion updatedHabitacion = existingHabitacion.get();
+        Optional<Habitacion> existingHabitacion = habitacionService.getHabitacionById(id);
+        if (existingHabitacion.isPresent()) {
+            Habitacion updatedHabitacion = existingHabitacion.get();
 
-        // Actualizar los campos simples
-        updatedHabitacion.setNombre(nombre);
-        updatedHabitacion.setDescripcion(descripcion);
-        updatedHabitacion.setPrecio(precio);
-        updatedHabitacion.setHuespedesAdultos(huespedesAdultos);
-        updatedHabitacion.setHuespedesNinos(huespedesNinos);
-        updatedHabitacion.setWhatsapp(whatsapp);
+            // Actualizar los campos simples
+            updatedHabitacion.setNombre(nombre);
+            updatedHabitacion.setDescripcion(descripcion);
+            updatedHabitacion.setPrecio(precio);
+            updatedHabitacion.setHuespedesAdultos(huespedesAdultos);
+            updatedHabitacion.setHuespedesNinos(huespedesNinos);
+            updatedHabitacion.setWhatsapp(whatsapp);
 
-        // Actualizar la ciudad
-        Ciudad ciudad = ciudadRepository.findById(idCiudad)
-                .orElseThrow(() -> new IllegalArgumentException("Ciudad no encontrada"));
-        updatedHabitacion.setCiudad(ciudad);
+            // Actualizar la ciudad
+            Ciudad ciudad = ciudadRepository.findById(idCiudad)
+                    .orElseThrow(() -> new IllegalArgumentException("Ciudad no encontrada"));
+            updatedHabitacion.setCiudad(ciudad);
 
-        // Manejar las categorías
-        if (categorias != null && !categorias.isEmpty() && !categorias.equals("[]")) {
-            List<Long> categoriaIds = Arrays.stream(categorias.replace("[", "").replace("]", "").split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            List<Categoria> categoriasObj = categoriaService.getCategoriasByIds(categoriaIds);
-            updatedHabitacion.setCategorias(categoriasObj);
+            // Manejar las categorías
+            if (categorias != null && !categorias.isEmpty() && !categorias.equals("[]")) {
+                List<Long> categoriaIds = Arrays.stream(categorias.replace("[", "").replace("]", "").split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                List<Categoria> categoriasObj = categoriaService.getCategoriasByIds(categoriaIds);
+                updatedHabitacion.setCategorias(categoriasObj);
+            }
+
+            // Manejar las políticas
+            if (politicas != null && !politicas.isEmpty() && !politicas.equals("[]")) {
+                List<Long> politicaIds = Arrays.stream(politicas.replace("[", "").replace("]", "").split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                List<Politica> politicasObj = politicaService.getPoliticasByIds(politicaIds);
+                updatedHabitacion.setPoliticas(politicasObj);
+            }
+
+            // Manejar las características
+            if (caracteristicas != null && !caracteristicas.isEmpty() && !caracteristicas.equals("[]")) {
+                List<Long> caracteristicaIds = Arrays
+                        .stream(caracteristicas.replace("[", "").replace("]", "").split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                List<Caracteristica> caracteristicasObj = caractertisticaService
+                        .getCaracteristicasByIds(caracteristicaIds);
+                updatedHabitacion.setCaracteristicas(caracteristicasObj);
+            }
+
+            habitacionService.saveHabitacion(updatedHabitacion); // Guardar la habitación actualizada
+            return ResponseEntity.ok(updatedHabitacion);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-
-        // Manejar las políticas
-        if (politicas != null && !politicas.isEmpty() && !politicas.equals("[]")) {
-            List<Long> politicaIds = Arrays.stream(politicas.replace("[", "").replace("]", "").split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            List<Politica> politicasObj = politicaService.getPoliticasByIds(politicaIds);
-            updatedHabitacion.setPoliticas(politicasObj);
-        }
-
-        // Manejar las características
-        if (caracteristicas != null && !caracteristicas.isEmpty() && !caracteristicas.equals("[]")) {
-            List<Long> caracteristicaIds = Arrays.stream(caracteristicas.replace("[", "").replace("]", "").split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-            List<Caracteristica> caracteristicasObj = caractertisticaService.getCaracteristicasByIds(caracteristicaIds);
-            updatedHabitacion.setCaracteristicas(caracteristicasObj);
-        }
-
-        habitacionService.saveHabitacion(updatedHabitacion); // Guardar la habitación actualizada
-        return ResponseEntity.ok(updatedHabitacion);
-    } else {
-        return ResponseEntity.notFound().build();
     }
-}
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteHabitacion(@PathVariable Long id) {
         habitacionService.deleteHabitacion(id);
