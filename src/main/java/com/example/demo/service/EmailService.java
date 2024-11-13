@@ -33,29 +33,37 @@ public class EmailService {
 
     public void enviarCorreo(Reserva reserva, String destinatario, String nombreDestinatario, Habitacion habitacion,
             LocalDate fechaReserva, LocalDate fechaFinReserva) throws IOException {
-        Email from = new Email("caterinmorales111@gmail.com");
+        
+        // Dirección del remitente y destinatario
+        Email from = new Email("caterinmorales111@gmail.com"); // Cambiar por tu dirección de correo si es necesario
         Email to = new Email(destinatario);
 
-        String asunto = "Estas a un clic de reservar tu habitacion";
+        // Asunto del correo
+        String asunto = "¡Confirmación de tu Reserva!";
+        
+        // Contenido en formato HTML
         String contenido = this.correoHtml(reserva, habitacion, fechaReserva, fechaFinReserva, nombreDestinatario);
 
         Content emailContent = new Content("text/html", contenido);
         Mail mail = new Mail(from, asunto, to, emailContent);
 
+        // Configurar SendGrid
         SendGrid sg = new SendGrid(sendGridApiKey);
         Request request = new Request();
+        
         try {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
+
             Response response = sg.api(request);
             System.out.println("Status Code: " + response.getStatusCode());
             System.out.println("Body: " + response.getBody());
             System.out.println("Headers: " + response.getHeaders());
 
-            System.out.println("Se ha enviado el correo de confirmacion a : " + destinatario);
+            System.out.println("Correo de confirmación enviado a: " + destinatario);
         } catch (IOException ex) {
-            throw ex;
+            throw new IOException("Error al enviar correo con SendGrid: " + ex.getMessage(), ex);
         }
     }
 
