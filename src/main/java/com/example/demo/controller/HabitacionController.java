@@ -43,7 +43,6 @@ import com.example.demo.service.HabitacionService;
 import com.example.demo.service.ImagenService;
 import com.example.demo.service.PoliticaService;
 
-
 @RestController
 @RequestMapping("/habitaciones")
 public class HabitacionController {
@@ -142,7 +141,6 @@ public class HabitacionController {
         habitacion.setCaracteristicas(caracteristicasObj);
 
         Habitacion savedHabitacion = habitacionService.saveHabitacion(habitacion);
-        
 
         // Crear el directorio basado en el ID de la habitación
         String uploadDirectory = "src/main/resources/static/uploads/" + savedHabitacion.getId() + "/";
@@ -150,7 +148,6 @@ public class HabitacionController {
         if (!directory.exists()) {
             directory.mkdirs(); // Crear la estructura de directorios si no existe
         }
-
         // Guardar las imágenes
         for (MultipartFile imagen : imagenes) {
             try {
@@ -279,15 +276,16 @@ public class HabitacionController {
     public List<Habitacion> buscarHabitaciones(@RequestParam String busqueda) {
         return habitacionService.buscarHabitaciones(busqueda);
     }
+
     @GetMapping("/uploads/{habitacionId}/{imagen}")
     public ResponseEntity<Resource> getImagen(@PathVariable Long habitacionId, @PathVariable String imagen) {
         Path path = Paths.get("src/main/resources/static/uploads/" + habitacionId + "/" + imagen);
         Resource resource = new FileSystemResource(path);
-        
+
         if (!resource.exists()) {
             return ResponseEntity.notFound().build();
         }
-        
+
         return ResponseEntity.ok().body(resource);
     }
 }
