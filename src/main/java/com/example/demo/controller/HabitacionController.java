@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -140,33 +142,32 @@ public class HabitacionController {
         habitacion.setCaracteristicas(caracteristicasObj);
 
         Habitacion savedHabitacion = habitacionService.saveHabitacion(habitacion);
-        Long habitacionId = savedHabitacion.getId();
+        
 
         // Crear el directorio basado en el ID de la habitación
-        String uploadDirectory = "src/main/resources/static/uploads/" + habitacionId + "/";
+        String uploadDirectory = "src/main/resources/static/uploads/" + savedHabitacion.getId() + "/";
         File directory = new File(uploadDirectory);
         if (!directory.exists()) {
             directory.mkdirs(); // Crear la estructura de directorios si no existe
         }
 
+        // Guardar las imágenes
         for (MultipartFile imagen : imagenes) {
             try {
-                // Ruta completa donde guardar la imagen
                 Path filePath = Paths.get(uploadDirectory + imagen.getOriginalFilename().replace(" ", ""));
                 Files.write(filePath, imagen.getBytes());
 
-                // Guardar la imagen en la base de datos (relacionándola con la habitación)
                 Imagen nuevaImagen = new Imagen();
                 nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
                 nuevaImagen.setHabitacion(savedHabitacion);
-                imagenService.saveImagen(nuevaImagen); // Guarda la imagen en la base de datos
+                imagenService.saveImagen(nuevaImagen); // Guardar la imagen en la base de datos
 
-                System.out.println("Imagen guardada en: " + filePath.toString());
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResponseEntity.status(500).build();
             }
         }
+
         return ResponseEntity.ok(savedHabitacion);
     }
 
@@ -277,5 +278,16 @@ public class HabitacionController {
     @GetMapping("/buscar")
     public List<Habitacion> buscarHabitaciones(@RequestParam String busqueda) {
         return habitacionService.buscarHabitaciones(busqueda);
+    }
+    @GetMapping("/uploads/{habitacionId}/{imagen}")
+    public ResponseEntity<Resource> getImagen(@PathVariable Long habitacionId, @PathVariable String imagen) {
+        Path path = Paths.get("src/main/resources/static/uploads/" + habitacionId + "/" + imagen);
+        Resource resource = new FileSystemResource(path);
+        
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok().body(resource);
     }
 }
