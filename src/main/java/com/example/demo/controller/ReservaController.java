@@ -146,7 +146,7 @@ public class ReservaController {
         if ("Reserva no encontrada.".equals(resultado)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultado);
         } else {
-            return ResponseEntity.ok(resultado);
+            return ResponseEntity.ok("Reserva confirmada con éxito");
         }
     }
 
