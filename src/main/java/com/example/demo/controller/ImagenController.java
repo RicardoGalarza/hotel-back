@@ -78,12 +78,12 @@ public class ImagenController {
         Imagen imagen = new Imagen();
         imagen.setNombre(fileName);
 
-        // Usa el setter correcto para asociar la imagen con una habitación
+        // Relaciona la imagen con la habitación
         Habitacion habitacion = new Habitacion();
-        habitacion.setId(habitacionId); // Se supone que habrás cargado el habitacion con el id adecuado
-        imagen.setHabitacion(habitacion); // Relaciona la imagen con la habitación
+        habitacion.setId(habitacionId); // Usa el ID de la habitación enviado desde el frontend
+        imagen.setHabitacion(habitacion); // Establece la relación de la imagen con la habitación
 
-        imagen.setUrl(imageUrl); // Establece la URL de la imagen
+        imagen.setUrl(imageUrl); // Establece la URL de la imagen obtenida de GCP
 
         imagenService.saveImagen(imagen); // Guarda la imagen en la base de datos
 
@@ -91,15 +91,15 @@ public class ImagenController {
     }
 
     @GetMapping("/descargar/{fileName}")
-public ResponseEntity<byte[]> downloadImagen(@PathVariable String fileName) throws IOException {
-    // Llamar al método downloadFile para obtener los bytes de la imagen
-    byte[] imageBytes = googleCloudStorageService.downloadFile(fileName);
+    public ResponseEntity<byte[]> downloadImagen(@PathVariable String fileName) throws IOException {
+        // Llamar al método downloadFile para obtener los bytes de la imagen
+        byte[] imageBytes = googleCloudStorageService.downloadFile(fileName);
 
-    // Establecer las cabeceras para indicar que el contenido es una imagen
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");  // Cambiar a otro tipo si la imagen no es JPEG
-    headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"");
+        // Establecer las cabeceras para indicar que el contenido es una imagen
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg"); // Cambiar a otro tipo si la imagen no es JPEG
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"");
 
-    return ResponseEntity.ok().headers(headers).body(imageBytes);
-}
+        return ResponseEntity.ok().headers(headers).body(imageBytes);
+    }
 }
