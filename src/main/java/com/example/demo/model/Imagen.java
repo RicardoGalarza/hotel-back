@@ -25,8 +25,9 @@ public class Imagen {
     @JsonIgnore
     private Habitacion habitacion;
 
-    // Getters y Setters
+    private String url;  // Para almacenar la URL de la imagen
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -49,5 +50,13 @@ public class Imagen {
 
     public void setHabitacion(Habitacion habitacion) {
         this.habitacion = habitacion;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
