@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +67,14 @@ public class HabitacionController {
     @GetMapping
     public List<Habitacion> getAllHabitaciones() {
         List<Habitacion> habitaciones = habitacionService.getAllHabitaciones();
-        Collections.shuffle(habitaciones); // Mezcla la lista de forma aleatoria
+
+    for (Habitacion habitacion : habitaciones) {
+        for (Imagen imagen : habitacion.getImagenes()) {
+            // Genera la URL completa de la imagen almacenada en GCP
+            String imageUrl = "https://storage.googleapis.com/imagenes-proyecto-hotel/habitacion-" + habitacion.getId() + "/" + imagen.getNombre();
+            imagen.setUrl(imageUrl); // Establece la URL completa de la imagen
+        }
+    }
         return habitaciones;
     }
 

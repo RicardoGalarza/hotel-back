@@ -30,7 +30,7 @@ public class GoogleCloudStorageService {
         }
 
         // Devuelve la URL pública del archivo
-        return "https://storage.googleapis.com/" + bucketName + "/" + fileName;
+        return "https://storage.googleapis.com/imagenes-proyecto-hotel/" + bucketName + "/" + fileName;
     }
 
     public byte[] downloadFile(String fileName) throws IOException {
