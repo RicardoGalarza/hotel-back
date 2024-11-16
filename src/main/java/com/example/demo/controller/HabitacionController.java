@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -38,6 +36,7 @@ import com.example.demo.model.Politica;
 import com.example.demo.repository.CiudadRepository;
 import com.example.demo.service.CaracteristicaService;
 import com.example.demo.service.CategoriaService;
+import com.example.demo.service.GoogleCloudStorageService;
 import com.example.demo.service.HabitacionService;
 import com.example.demo.service.ImagenService;
 import com.example.demo.service.PoliticaService;
@@ -64,17 +63,20 @@ public class HabitacionController {
     @Autowired
     private CaracteristicaService caractertisticaService;
 
+    @Autowired
+    private GoogleCloudStorageService googleCloudStorageService;
+
     @GetMapping
     public List<Habitacion> getAllHabitaciones() {
         List<Habitacion> habitaciones = habitacionService.getAllHabitaciones();
 
-    for (Habitacion habitacion : habitaciones) {
-        for (Imagen imagen : habitacion.getImagenes()) {
-            // Genera la URL completa de la imagen almacenada en GCP
-            String imageUrl = "https://storage.googleapis.com/imagenes-proyecto-hotel/habitacion-" + habitacion.getId() + "/" + imagen.getNombre();
-            imagen.setUrl(imageUrl); // Establece la URL completa de la imagen
+        for (Habitacion habitacion : habitaciones) {
+            for (Imagen imagen : habitacion.getImagenes()) {
+                // Genera la URL completa de la imagen almacenada en GCP
+                String imageUrl = "https://storage.googleapis.com/imagenes-proyecto-hotel/habitacion-" + habitacion.getId() + "/" + imagen.getNombre();
+                imagen.setUrl(imageUrl); // Establece la URL completa de la imagen
+            }
         }
-    }
         return habitaciones;
     }
 
@@ -100,8 +102,7 @@ public class HabitacionController {
             @RequestParam("descripcion") String descripcion,
             @RequestParam("precio") Double precio,
             @RequestParam("categorias") String categorias,
-            @RequestParam("imagenes") List<MultipartFile> imagenes, // Asegúrate de que las imágenes estén bien
-                                                                    // recogidas
+            @RequestParam("imagenes") List<MultipartFile> imagenes, // Asegúrate de que las imágenes estén bien recogidas
             @RequestParam("ciudad") Long idCiudad,
             @RequestParam("huespedesAdultos") int huespedesAdultos,
             @RequestParam("huespedesNinos") int huespedesNinos,
@@ -127,7 +128,6 @@ public class HabitacionController {
                 .collect(Collectors.toList());
 
         List<Categoria> categoriasObj = categoriaService.getCategoriasByIds(categoriaIds);
-
         habitacion.setCategorias(categoriasObj);
 
         // Manejar las políticas
@@ -148,20 +148,16 @@ public class HabitacionController {
 
         Habitacion savedHabitacion = habitacionService.saveHabitacion(habitacion);
 
-        // Crear el directorio basado en el ID de la habitación
-        String uploadDirectory = "src/main/resources/static/uploads/" + savedHabitacion.getId() + "/";
-        File directory = new File(uploadDirectory);
-        if (!directory.exists()) {
-            directory.mkdirs(); // Crear la estructura de directorios si no existe
-        }
-        // Guardar las imágenes
+        // Subir las imágenes al bucket de Google Cloud Storage
         for (MultipartFile imagen : imagenes) {
             try {
-                Path filePath = Paths.get(uploadDirectory + imagen.getOriginalFilename().replace(" ", ""));
-                Files.write(filePath, imagen.getBytes());
+                // Usar el servicio de Google Cloud Storage para subir la imagen
+                String fileName = savedHabitacion.getId() + "/" + imagen.getOriginalFilename().replace(" ", "");
+                String publicUrl = googleCloudStorageService.uploadFile(imagen, fileName);
 
                 Imagen nuevaImagen = new Imagen();
                 nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
+                nuevaImagen.setUrl(publicUrl); // Almacenar la URL pública de la imagen
                 nuevaImagen.setHabitacion(savedHabitacion);
                 imagenService.saveImagen(nuevaImagen); // Guardar la imagen en la base de datos
 

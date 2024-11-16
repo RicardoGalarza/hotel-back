@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "theta-office-441913-b8",
+  "private_key_id": "09cae6879e44281acb5d896856933a0b42e84fd3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDKipR2S1c2ij+M\nzpDdvzS2Sp3odsD4+7nS/T//UwSAblu76stVWeVHA+U5A05ofUMkxMQOmgmlFAzY\n8sMPu7pkZYOSSoRgF4++DKz62eNVUUt+omb9dqn01geIHT8arZhIiT++YnjHy/0n\nf3cUzocZQS/pELlOjlKiPXXR7tWFq2JThhj/IZ5W5+zcjuFyB+mtBbyVCK9UU4Au\nUPJgdUEo21/8PMhLfQYG4x6dAg3Sasnrebv9SAJtxCNGRvFI/KcqGi+7RkaLYbcO\n7JadNfE0d68dsMMMJPjRNq2xnnM5aMgMP9jEfGuikGhfa3Q9tK3xhL6SKtiSEhkq\no642Qn2vAgMBAAECggEATSkELBjBreZ3FWZwa/n20+eTRsdO9su3XDjck6GF2oOw\ncOOe+PIZVbeXMOQgj9AAr1ZCtqlaOUhtKI07YJgNB0hhGm9HBPCU8zsS/zHY2Fzz\nHNgz0iXN05diISm7K6eslx2qahZLmxoMZGq76/JOJ4HdBbY4UkQIGQS/CO4q7BPS\n6ZRi8kSAoPvSdH+4kC/2jzw9rsRiJtoIlCnB0tKt3h/X2WHWqRghlUpSJP4X2HOc\nMdPVolX5UeXUtic4Z4ca61F/ymNfRPTq3VExqGYfRIhsOsTF4utjCDyx17ulrpdM\nRvq+/5o3sKnELNkMsz53iy/d8FOXovIXsO6cX5xKiQKBgQD/ccUq2jngomld0R+W\nAtlwEbx/h/H9m9+3L1XKlPXYyB6cyTYoRGlsiUr1OAIfLyyQtEu9ksDaLPh8JgsH\nNLPRmsHcmsvwXAZ9AxlU1a9H8D+pVS/MoLlZhCd+2LF3mQD+wirMkyq8S/QjA4wa\nW8BKv8l6q2GTll56S1sna8u07QKBgQDK+1qIdqGuAH0rh+PtkGsI9Y9svYACVNZZ\nE6DVCv4fw606ibPEDysyPlIgJyNB3Cp/08A2+Q5dJwQ/AF3jjOGguBk5LSOqw1Vd\nEeJsFFPGvRnWr9AvVxMX/8093+nh0OUDmTAgn9b3tYCRSk5Mii7DVb96aEXMjMgc\nYq3jzGUliwKBgQCjUmyL34dN1smjkEevtBauDskEiTjxu62oA/3ITsF5X0ojWIrl\n6Ae3u3hPnQXORm0p//zFMoVXeZVOW0yFyO6Hv3jfwaFPBqenWknh8dXmGve5Hpw3\nKzQWxeYytf2RyCPYvvB6aEXUqoNnt6bmW29w23rIkbcLlALIElIvvD48aQKBgQC4\nYhMfGwRLF06cmFhHmIRiIw4h7RG3DHGZgOb8H3wwRoO5RRTy6ASJI2teoa65SNGi\nRCu6xAp0O9jzkdW3umXKpPDkq0hW+hE09eYD34MqaORrzFEEb8h8aHV720aNRkCC\nQEkjmY6gfVNIp4LwrCVGc0H4Y3fkE45Dmq/y2dyXeQKBgQDyNTMIssED9ih/1hkf\nTD3FD6DaeVpkH3TDCjGhZ9Dureh/TajaNySR6jv38/162y6+N7s8jYpMM6z04HgV\nXrlCbLgz2ji7tSD0ZARhjFNpvoUa5Krd/ZrgCjEdj9jkzxFp1bKcYbWx7UBMprXS\nwxN4yZjLLxv0F3e8xUlCsjMRVg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "hotel-storage@theta-office-441913-b8.iam.gserviceaccount.com",
+  "client_id": "115324598459953465234",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hotel-storage%40theta-office-441913-b8.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
