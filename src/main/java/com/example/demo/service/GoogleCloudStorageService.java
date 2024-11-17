@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,9 +27,6 @@ public class GoogleCloudStorageService {
 
     @Value("${spring.cloud.gcp.project-id}")
     private String projectId;
-
-    @Value("${spring.cloud.gcp.credentials.location}")
-    private Resource credentialsLocation;
 
     @PostConstruct
     public void init() throws IOException {
