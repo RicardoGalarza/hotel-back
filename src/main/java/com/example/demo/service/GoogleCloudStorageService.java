@@ -28,12 +28,13 @@ public class GoogleCloudStorageService {
     @Value("${spring.cloud.gcp.project-id}")
     private String projectId;
 
+    @Value("${google.credentials.json:}")
+    private String credentialsJson; 
+
     @PostConstruct
     public void init() throws IOException {
-        // Obtiene el contenido del JSON de la variable de entorno
-        String credentialsJson = System.getenv("GOOGLE_CREDENTIALS_JSON");
         if (credentialsJson == null || credentialsJson.isEmpty()) {
-            throw new IllegalStateException("Faltan las credenciales de Google Cloud en la variable de entorno GOOGLE_CREDENTIALS_JSON");
+            throw new IllegalStateException("Faltan las credenciales de Google Cloud en la propiedad google.credentials.json");
         }
 
         try (InputStream credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8))) {
