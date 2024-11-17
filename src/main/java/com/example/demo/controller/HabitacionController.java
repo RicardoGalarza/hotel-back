@@ -73,8 +73,6 @@ public class HabitacionController {
     @Value("${base.url.google.storage}")
     private String baseUrlGoogleStorage;
 
-    
-
     @GetMapping
     public List<Habitacion> getAllHabitaciones() {
         List<Habitacion> habitaciones = habitacionService.getAllHabitaciones();
@@ -247,6 +245,25 @@ public class HabitacionController {
                 List<Caracteristica> caracteristicasObj = caractertisticaService
                         .getCaracteristicasByIds(caracteristicaIds);
                 updatedHabitacion.setCaracteristicas(caracteristicasObj);
+            }
+
+            // Subir las imágenes al bucket de Google Cloud Storage
+            for (MultipartFile imagen : imagenes) {
+                try {
+                    // Usar el servicio de Google Cloud Storage para subir la imagen
+                    String fileName = id + "/" + imagen.getOriginalFilename().replace(" ", "");
+                    String publicUrl = googleCloudStorageService.uploadFile(imagen, fileName);
+
+                    Imagen nuevaImagen = new Imagen();
+                    nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
+                    nuevaImagen.setUrl(publicUrl);
+                    nuevaImagen.setHabitacion(updatedHabitacion);
+                    imagenService.saveImagen(nuevaImagen);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(500).build();
+                }
             }
 
             habitacionService.saveHabitacion(updatedHabitacion); // Guardar la habitación actualizada
