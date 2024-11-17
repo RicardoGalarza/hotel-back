@@ -33,6 +33,8 @@ public class GoogleCloudStorageService {
 
     @PostConstruct
     public void init() throws IOException {
+        System.out.println("***********************************GOOGLE_CREDENTIALS_JSON es: ");
+        System.getenv("GOOGLE_CREDENTIALS_JSON");
         if (credentialsJson == null || credentialsJson.isEmpty()) {
             throw new IllegalStateException("Faltan las credenciales de Google Cloud en la propiedad google.credentials.json");
         }
