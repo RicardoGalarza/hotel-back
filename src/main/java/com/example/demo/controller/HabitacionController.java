@@ -154,7 +154,7 @@ public class HabitacionController {
             try {
                 // Usar el servicio de Google Cloud Storage para subir la imagen
                 String fileName = savedHabitacion.getId() + "/" + imagen.getOriginalFilename().replace(" ", "");
-                String publicUrl = baseUrlGoogleStorage+"/"+bucketHabitaciones+"/"+googleCloudStorageService.uploadFile(imagen, fileName);
+                String publicUrl = googleCloudStorageService.uploadFile(imagen, fileName);
 
                 Imagen nuevaImagen = new Imagen();
                 nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
