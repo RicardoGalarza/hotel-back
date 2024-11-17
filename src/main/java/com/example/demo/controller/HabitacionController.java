@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -66,17 +67,17 @@ public class HabitacionController {
     @Autowired
     private GoogleCloudStorageService googleCloudStorageService;
 
+    @Value("${bucket.habitaciones}")
+    private String bucketHabitaciones;
+
+    @Value("${base.url.google.storage}")
+    private String baseUrlGoogleStorage;
+
+    
+
     @GetMapping
     public List<Habitacion> getAllHabitaciones() {
         List<Habitacion> habitaciones = habitacionService.getAllHabitaciones();
-
-        for (Habitacion habitacion : habitaciones) {
-            for (Imagen imagen : habitacion.getImagenes()) {
-                // Genera la URL completa de la imagen almacenada en GCP
-                String imageUrl = "https://storage.googleapis.com/imagenes-proyecto-hotel/habitacion-" + habitacion.getId() + "/" + imagen.getNombre();
-                imagen.setUrl(imageUrl); // Establece la URL completa de la imagen
-            }
-        }
         return habitaciones;
     }
 
@@ -153,13 +154,13 @@ public class HabitacionController {
             try {
                 // Usar el servicio de Google Cloud Storage para subir la imagen
                 String fileName = savedHabitacion.getId() + "/" + imagen.getOriginalFilename().replace(" ", "");
-                String publicUrl = googleCloudStorageService.uploadFile(imagen, fileName);
+                String publicUrl = baseUrlGoogleStorage+"/"+bucketHabitaciones+"/"+googleCloudStorageService.uploadFile(imagen, fileName);
 
                 Imagen nuevaImagen = new Imagen();
                 nuevaImagen.setNombre(imagen.getOriginalFilename().replace(" ", ""));
-                nuevaImagen.setUrl(publicUrl); // Almacenar la URL pública de la imagen
+                nuevaImagen.setUrl(publicUrl);
                 nuevaImagen.setHabitacion(savedHabitacion);
-                imagenService.saveImagen(nuevaImagen); // Guardar la imagen en la base de datos
+                imagenService.saveImagen(nuevaImagen);
 
             } catch (IOException e) {
                 e.printStackTrace();
