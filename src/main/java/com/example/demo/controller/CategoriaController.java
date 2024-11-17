@@ -1,10 +1,6 @@
 package com.example.demo.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Categoria;
 import com.example.demo.service.CategoriaService;
+import com.example.demo.service.GoogleCloudStorageService;
 
 @RestController
 @RequestMapping("/categorias")
@@ -35,6 +32,10 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
+    @Autowired
+    private GoogleCloudStorageService googleCloudStorageService;
+
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Categoria crearCategoria(
             @RequestParam("nombre") String nombre,
@@ -42,30 +43,24 @@ public class CategoriaController {
             @RequestParam("imagen") MultipartFile imagen) {
 
         try {
-            // Procesar la imagen y definir la ruta
-            String uploadDirectory = "src/main/resources/static/uploads/categorias/";
-            File directory = new File(uploadDirectory);
-            if (!directory.exists()) {
-                directory.mkdirs(); // Crear el directorio si no existe
-            }
+            // Generar el nombre de archivo para la imagen de la categoría
+            String fileName = "categoria-" + nombre.replaceAll("\\s+", "_") + "-" + imagen.getOriginalFilename().replace(" ", "");
 
-            String fileName = imagen.getOriginalFilename().replace(" ", "");
-            String filePath = uploadDirectory + fileName;
-            Path path = Paths.get(filePath);
-            Files.write(path, imagen.getBytes());
+            // Subir la imagen a Google Cloud Storage (similar a tu lógica de habitaciones)
+            String imagePath = "categorias/" + fileName;
+            String publicUrl = googleCloudStorageService.uploadFile(imagen, imagePath);
 
             // Crear y guardar la categoría
             Categoria categoria = new Categoria();
             categoria.setNombre(nombre);
             categoria.setDescripcion(descripcion);
             categoria.setFechaCreacion(LocalDateTime.now());
-            categoria.setNombreImagen(fileName); // Asigna la ruta de la imagen
+            categoria.setNombreImagen(publicUrl);
 
             return categoriaService.crearCategoria(categoria);
-
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return null; // Maneja la excepción según sea necesario
         }
     }
 
