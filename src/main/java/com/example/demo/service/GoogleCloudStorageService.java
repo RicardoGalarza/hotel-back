@@ -50,6 +50,7 @@ public class GoogleCloudStorageService {
             throw new IllegalStateException("Faltan las credenciales de Google Cloud en la propiedad google.credentials.json");
         }
 
+        System.out.println("ahora va por el inputstream");
         try (InputStream credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8))) {
             this.storage = StorageOptions.newBuilder()
                 .setProjectId(projectId)
