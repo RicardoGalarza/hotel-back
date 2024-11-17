@@ -1,12 +1,6 @@
 package com.example.demo.controller;
 
-<<<<<<< HEAD
 import java.io.IOException;
-=======
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
->>>>>>> f77d8bef6aea98030e058ba5e3f27f5dcc2fe843
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
