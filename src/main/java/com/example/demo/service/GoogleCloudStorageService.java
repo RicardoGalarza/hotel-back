@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
@@ -51,15 +52,30 @@ public class GoogleCloudStorageService {
         }
 
         System.out.println("ahora va por el inputstream");
-        try (InputStream credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8))) {
-            this.storage = StorageOptions.newBuilder()
-                .setProjectId(projectId)
-                .setCredentials(GoogleCredentials.fromStream(credentialsStream))
-                .build()
-                .getService();
+
+        System.out.println("Longitud de credentialsJson: " + credentialsJson.length());
+        System.out.println("Contenido de credentialsJson: " + credentialsJson);
+
+
+        try {
+            byte[] jsonBytes = credentialsJson.getBytes(StandardCharsets.UTF_8);
+            System.out.println("Bytes del JSON: " + Arrays.toString(jsonBytes));
+        
+            try (InputStream credentialsStream = new ByteArrayInputStream(jsonBytes)) {
+                this.storage = StorageOptions.newBuilder()
+                    .setProjectId(projectId)
+                    .setCredentials(GoogleCredentials.fromStream(credentialsStream))
+                    .build()
+                    .getService();
+                System.out.println("Servicio de almacenamiento inicializado correctamente.");
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load Google Cloud Storage credentials", e);
+            e.printStackTrace();
+            throw new RuntimeException("Error al cargar las credenciales de Google Cloud Storage", e);
         }
+        
+
+        
     }
 
     public String uploadFile(MultipartFile file, String fileName) throws IOException {
