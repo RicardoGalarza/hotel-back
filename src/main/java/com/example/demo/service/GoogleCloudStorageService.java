@@ -20,7 +20,7 @@ public class GoogleCloudStorageService {
     private final String bucketName;
 
     public GoogleCloudStorageService(
-        @Value("${google.cloud.storage.bucket-name}") String bucketName) {
+            @Value("${google.cloud.storage.bucket-name}") String bucketName) {
         // Se inicializa el cliente de almacenamiento de GCP con la configuración predeterminada de Spring
         this.storage = StorageOptions.getDefaultInstance().getService();
         this.bucketName = bucketName;
