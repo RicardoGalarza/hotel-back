@@ -29,12 +29,23 @@ public class GoogleCloudStorageService {
     private String projectId;
 
     @Value("${google.credentials.json:}")
-    private String credentialsJson; 
+    private String credentialsJson;
 
     @PostConstruct
     public void init() throws IOException {
+
+        System.out.println("***********************************PROJECT_ID_GCP es: ");
+        System.out.println(projectId);
+
+        System.out.println("***********************************GOOGLE_CREDENTIALS_JSON DESDE EL SERVICE CTM! es: ");
+        System.out.println(credentialsJson);
+
+
         System.out.println("***********************************GOOGLE_CREDENTIALS_JSON es: ");
-        System.getenv("GOOGLE_CREDENTIALS_JSON");
+        System.out.println(System.getenv("GOOGLE_CREDENTIALS_JSON"));
+
+
+        
         if (credentialsJson == null || credentialsJson.isEmpty()) {
             throw new IllegalStateException("Faltan las credenciales de Google Cloud en la propiedad google.credentials.json");
         }
