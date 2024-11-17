@@ -29,7 +29,7 @@ public class GoogleCloudStorageService {
     @Value("${spring.cloud.gcp.project-id}")
     private String projectId;
 
-    @Value("${google.credentials.json:}")
+    @Value("${google.credentials.json}")
     private String credentialsJson;
 
     @PostConstruct
