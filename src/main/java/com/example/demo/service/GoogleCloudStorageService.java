@@ -1,12 +1,15 @@
 package com.example.demo.service;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,33 +30,45 @@ public class GoogleCloudStorageService {
     @Value("${spring.cloud.gcp.project-id}")
     private String projectId;
 
-    @Value("${spring.cloud.gcp.credentials.location}")
-    private Resource credentialsLocation;
+    @Value("${google.credentials.json}")
+    private String credentialsJson;
 
     @PostConstruct
     public void init() throws IOException {
-        try (InputStream credentialsStream = credentialsLocation.getInputStream()) {
-            this.storage = StorageOptions.newBuilder()
-                .setProjectId(projectId)
-                .setCredentials(GoogleCredentials.fromStream(credentialsStream))
-                .build()
-                .getService();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load Google Cloud Storage credentials", e);
+        if (credentialsJson == null || credentialsJson.isEmpty()) {
+            throw new IllegalStateException("Faltan las credenciales de Google Cloud en la propiedad google.credentials.json");
         }
+
+        System.out.println("ahora va por el inputstream");
+
+        System.out.println("Longitud de credentialsJson: " + credentialsJson.length());
+        System.out.println("Contenido de credentialsJson: " + credentialsJson);
+
+        try {
+            byte[] jsonBytes = credentialsJson.getBytes(StandardCharsets.UTF_8);
+            System.out.println("Bytes del JSON: " + Arrays.toString(jsonBytes));
+
+            try (InputStream credentialsStream = new ByteArrayInputStream(jsonBytes)) {
+                this.storage = StorageOptions.newBuilder()
+                        .setProjectId(projectId)
+                        .setCredentials(GoogleCredentials.fromStream(credentialsStream))
+                        .build()
+                        .getService();
+                System.out.println("Servicio de almacenamiento inicializado correctamente.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al cargar las credenciales de Google Cloud Storage", e);
+        }
+
     }
 
     public String uploadFile(MultipartFile file, String fileName) throws IOException {
-        // Crear objeto BlobId para identificar el archivo en el bucket
         BlobId blobId = BlobId.of(bucketName, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-
-        // Subir el archivo al bucket
         try (WriteChannel writer = storage.writer(blobInfo)) {
             writer.write(ByteBuffer.wrap(file.getBytes()));
         }
-
-        // Retornar el nombre del archivo o alguna otra información que necesites
         return fileName;
     }
 
@@ -61,4 +76,5 @@ public class GoogleCloudStorageService {
         Blob blob = storage.get(BlobId.of(bucketName, fileName));
         return blob.getContent();
     }
+
 }

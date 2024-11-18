@@ -1,10 +1,5 @@
 package com.example.demo.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Caracteristica;
 import com.example.demo.service.CaracteristicaService;
+import com.example.demo.service.GoogleCloudStorageService;
 
 @RestController
 @RequestMapping("/caracteristicas")
@@ -25,6 +21,10 @@ public class CaracteristicaController {
 
     @Autowired
     private CaracteristicaService caracteristicaService;
+
+    @Autowired
+    private GoogleCloudStorageService googleCloudStorageService;
+
 
     @GetMapping
     public List<Caracteristica> obtenerTodasLasCaracteristicas() {
@@ -39,34 +39,22 @@ public class CaracteristicaController {
         Caracteristica caracteristica = new Caracteristica();
         caracteristica.setNombre(nombre);
 
-        Caracteristica carac = null;
-
-        // Guardar el nombre del archivo de imagen, si se proporciona una imagen
-        if (imagen != null && !imagen.isEmpty()) {
-            String nombreImagen = imagen.getOriginalFilename();
-            caracteristica.setImagenNombre(nombreImagen);
-
-            carac = caracteristicaService.crearCaracteristica(caracteristica);
-
-            // Aquí puedes agregar la lógica para guardar la imagen en el servidor
-            try {
-                // Ruta donde se guardarán las imágenes
-                String uploadDirectory = "src/main/resources/static/uploads/caracteristicas/"+carac.getId()+"/";
-                File directory = new File(uploadDirectory);
-                if (!directory.exists()) {
-                    directory.mkdirs(); // Crear el directorio si no existe
-                }
-
-                // Guardar la imagen en el servidor
-                Path filePath = Paths.get(uploadDirectory + nombreImagen);
-                Files.write(filePath, imagen.getBytes());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error al guardar la imagen", e);
-            }
+        try {
+            if (imagen != null && !imagen.isEmpty()) {
+                // Generar el nombre de archivo para la imagen de la característica
+                String fileName = "caracteristica-" + nombre.replaceAll("\\s+", "-") + "-" + imagen.getOriginalFilename().replace(" ", "");
+                String imagePath = "caracteristicas/" + fileName;
+    
+                // Subir la imagen a Google Cloud Storage
+                String publicUrl = googleCloudStorageService.uploadFile(imagen, imagePath);
+    
+                // Guardar la URL pública de la imagen en la entidad
+                caracteristica.setImagenNombre(publicUrl);
+            }    
+        } catch (Exception e) {
         }
-
-        return carac;
+        // Guardar la característica y devolverla
+        return caracteristicaService.crearCaracteristica(caracteristica);
     }
+
 }
